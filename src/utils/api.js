@@ -33,7 +33,7 @@ axios.interceptors.response.use(success => {
     return;
 });
 let base = '';
-//传送json格式的post请求
+//传送json格式的post请求 dsa
 export const postRequest = (url, params) => {
     return axios({
         method: 'post',
