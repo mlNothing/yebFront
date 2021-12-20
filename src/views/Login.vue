@@ -1,6 +1,10 @@
 <template>
   <div>
-    <el-form :rules="rules" ref="loginForm" :model="loginForm" class="loginContainer">
+    <el-form  v-loading="loading"
+                 element-loading-text="正在登录..."
+                 element-loading-spinner="el-icon-loading"
+                element-loading-background="rgba(0, 0, 0, 0.8)" 
+                :rules="rules" ref="loginForm" :model="loginForm" class="loginContainer">
             <h3 class="loginTitle">系统登录</h3>
             <el-form-item prop="username">
                 <el-input type="text" v-model="loginForm.username" auto-complete="false" placeholder="请输入用户名"></el-input>
@@ -45,9 +49,11 @@ import {postRequest} from "../utils/api"
          submitLogin(){
             this.$refs.loginForm.validate((valid)=>{
                     if (valid){
+                        this.loading = true;
                         postRequest('/admin/login',this.loginForm).then(resp=>{
                           if(resp){
-                            alert(JSON.stringify(resp));
+                            this.loading = false;
+                            this.$router.replace('/home');
                           }
                         })
                    } else {
