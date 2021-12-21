@@ -10,8 +10,8 @@
                     <!-- select :菜单激活回调 index :选中菜单项的index  indexPath:选中菜单项以及所属父菜单项的index 
                     渲染路由 router:是否使用vue-router的模式，启用改模式会在激活导航时以index作为path进行路由跳转 我们可以取消之前的select事件
                     -->
-                    <el-menu router >
-                        <el-submenu index="1" v-for="(item,index) in this.$router.options.routes"  v-if="!item.hidden"  :key="index"  >
+                    <el-menu router  unique-opened >
+                      <el-submenu :index="index+''" v-for="(item,index) in routes" v-if="!item.hidden"  :key="index"  >
                             <template slot="title">
                                 <i class="el-icon-location"></i>
                                 <span>{{item.name}}</span>
@@ -31,11 +31,12 @@
 <script>
     export default {
         name: 'Home',
-        methods: {
-            menuClick(index) {
-                this.$router.push(index);
+       computed:{
+           routes(){
+               return this.$store.state.routes;
            }
        }
+       
    }
 </script>
 <style>

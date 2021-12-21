@@ -1,4 +1,4 @@
-import { getRequest } from "./api";
+import {getRequest} from "./api";
 
 /**
  * 封装菜单请求工具类
@@ -9,21 +9,22 @@ import { getRequest } from "./api";
  * 所有我们需要封装菜单请求工具类来实现我们的需求。
  */
 
-export const initMenu=(router,store)=>{
-    if(store.state.router.length>0){
-        return;
+ 
+ export const initMenu = (router, store) => {
+     if (store.state.routes.length > 0) {
+         return;
     }
-    getRequest("/system/config/menu").then(data=>{
-        if(data){
-            // 格式化route
-            let fmtRoutes=formatRoutes(data);
-            // 添加到route
-            router.addRoutes(fmtRoutes);
-            // 将数据存入到vuex
-            store.commit('initRoutes',fmtRoutes);
+     getRequest("/system/config/menu").then(data => {
+         if (data) {
+             //格式化router
+             let fmtRoutes = formatRoutes(data);
+             //添加到router
+             router.addRoutes(fmtRoutes);
+             //将数据存入vuex
+             store.commit('initRoutes',fmtRoutes);
         }
     })
-}
+ }
 
 export const formatRoutes=(routes)=>{
     let fmtRoutes=[];
@@ -37,7 +38,7 @@ export const formatRoutes=(routes)=>{
             children
         }=router;
 
-        if(children&& children instanceof Array){
+        if(children && children instanceof Array){
             // 递归
             children=formatRoutes(children);
         }
@@ -61,7 +62,7 @@ export const formatRoutes=(routes)=>{
            }
         }
     }
-    formatRoutes.push(fmtRouter);
+    fmtRoutes.push(fmtRouter);
     })
         return fmtRoutes;
 }
