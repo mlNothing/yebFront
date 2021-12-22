@@ -11,7 +11,8 @@
                     渲染路由 router:是否使用vue-router的模式，启用改模式会在激活导航时以index作为path进行路由跳转 我们可以取消之前的select事件
                     -->
                     <el-menu router  unique-opened >
-                      <el-submenu :index="index+''" v-for="(item,index) in routes" v-if="!item.hidden"  :key="index"  >
+                      <!-- <el-submenu :index="index+''" v-for="(item,index) in routes" v-if="!item.hidden"  :key="index"  > -->
+                       <el-submenu :index="index+''" v-for="(item,index) in routes"   :key="index"  >
                             <template slot="title">
                                 <i style="color: #1accff;margin-right: 5px" :class="item.iconCls"></i>
                                 <span>{{item.name}}</span>
