@@ -1,6 +1,9 @@
 <template>
   <div>
-    <el-form   :rules="rules" ref="loginForm" :model="loginForm" class="loginContainer">
+    <el-form  v-loading="loading"
+                 element-loading-text="正在登录..."
+                 element-loading-spinner="el-icon-loading"
+                 element-loading-background="rgba(0, 0, 0, 0.8)" :rules="rules" ref="loginForm" :model="loginForm" class="loginContainer">
             <h3 class="loginTitle">系统登录</h3>
             <el-form-item prop="username">
                 <el-input type="text" v-model="loginForm.username" auto-complete="false" placeholder="请输入用户名"></el-input>
@@ -9,8 +12,8 @@
               <el-input type="password" v-model="loginForm.password" auto-complete="false"  placeholder="请输入密码"></el-input>
             </el-form-item>
             <el-form-item prop="code">
-                <el-input size="normal" type="text" v-model="loginForm.code" auto-complete="false"  placeholder="点击图片更换验证码" style="width:250px;margin-right: 5px"></el-input>
-                <img :src="captchaUrl" @click="updateCaptcha">
+                <el-input size="normal" type="text" v-model="loginForm.code" auto-complete="false"  placeholder="点击图片更换验证码" style="width:150px;margin-right: 5px"></el-input>
+                <img :src="captchaUrl" @click="updateCaptcha" style="height:40px" width="150px">
             </el-form-item>
             <el-checkbox class="loginRemember" v-model="checked">记住我</el-checkbox>
             <el-button type="primary" style="width: 100%" @click="submitLogin">登录</el-button>

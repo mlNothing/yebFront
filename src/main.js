@@ -19,13 +19,36 @@ Vue.prototype.getRequest = getRequest;
 Vue.prototype.deleteRequest = deleteRequest;
 
 
-router.beforeEach((to, from, next)=>{
-  if (to.path=='/'){
-      next()
-  } else {
-      initMenu(router,store);
+// router.beforeEach((to, from, next)=>{
+//   if (to.path=='/'){
+//       next()
+//   } else {
+//       initMenu(router,store);
+//       next();
+//   }
+// })
+
+
+// 前登录时只是获取用户token，并没有获取用户信息进行展示。我们可以在全局前置守卫时获取用户
+// 信息并存储在 SessionStorage 中方便使用
+router.beforeEach((to, from, next) => {
+  if (window.sessionStorage.getItem("tokenStr")) {
+      initMenu(router, store);
+      if (!window.sessionStorage.getItem("user")) {
+          return getRequest('/admin/info').then(resp => {
+              if (resp) {
+                  //存入用户信息
+                  window.sessionStorage.setItem("user", JSON.stringify(resp));
+                  next();
+             }
+         });
+     }
       next();
-  }
+ } else {
+      if (to.path == '/') {
+          next();
+     }
+ }
 })
 
 new Vue({
