@@ -40,7 +40,7 @@
                     <div class="homeWelcome" v-if="this.$router.currentRoute.path=='/home'">
                     欢迎来到天上人间！
                 </div>
-                    <router-view/>
+                    <router-view class="homeRouterView"/>
                 </el-main>
             </el-container>
         </el-container>
@@ -115,5 +115,8 @@
         .el-dropdown-link {
         display: flex;
         align-items: center;
+   }
+   .homeRouterView{
+        margin-top: 10px;
    }
 </style>
