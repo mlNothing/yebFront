@@ -50,10 +50,14 @@ import {postRequest} from "../utils/api"
                     if (valid){
                         postRequest('/admin/login',this.loginForm).then(resp=>{
                           if(resp){
-                    //存储用户token
+                  //存储用户token
                     const tokenStr = resp.obj.tokenHead+resp.obj.token;
                     window.sessionStorage.setItem('tokenStr', tokenStr);
-                    this.$router.replace('/home');
+                    //清空菜单
+                    this.$store.commit('initRoutes',[]);
+                    //页面跳转
+                    let path = this.$route.query.redirect;
+                    this.$router.replace((path == '/' || path == undefined) ?'/home' : path);
                           }
                         })
                    } else {
