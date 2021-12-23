@@ -8,17 +8,20 @@
             <el-button icon="el-icon-plus" size="small" type="primary" @click="addPosition">添加</el-button>
         </div>
         <div class="posManaMain">
-            <el-table :data="positions"    border  stripe   size="small" style="width: 70%">
+            <el-table :data="positions"    border  stripe   size="small" style="width: 70%"   @selection-change="handleSelectionChange">
+                <el-table-column    type="selection"    width="55">    </el-table-column>
                 <el-table-column    prop="id" label="编号" width="55"></el-table-column>
                 <el-table-column prop="name"  label="职位名称" width="120"> </el-table-column>
                 <el-table-column prop="createDate" label="创建时间"></el-table-column>
-                 <el-table-column label="操作">
+                <el-table-column label="操作">
                     <template slot-scope="scope">
                         <el-button @click="showEditView(scope.$index, scope.row)">编辑</el-button>
                         <el-button    size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除 </el-button>
                     </template>
                 </el-table-column>
             </el-table>
+              <el-button type="danger" size="small" style="margin-top: 8px" :disabled="multipleSelection.length==0" @click="deleteMany">批量删除
+            </el-button>
         </div>
         <!-- 对话框 -->
         <el-dialog title="编辑职位" :visible.sync="dialogVisible"  width="30%">
@@ -45,6 +48,7 @@
                 updatePos: {
                     name: ''
                },
+               multipleSelection: [],
                 positions: []
            }
        },
@@ -52,6 +56,31 @@
             this.initPositions();
        },
        methods: {
+           handleSelectionChange(val) {
+                this.multipleSelection = val;
+           },
+           deleteMany(){
+               this.$confirm('此操作将永久删除【'+this.multipleSelection.length+'】条记录，是否继续','提示',{
+                   confirmButtonText:'确实',
+                   cancelButtonText:'取消',
+                   type:'warning'
+               }).then(()=>{
+                   let ids='?';
+                   this.multipleSelection.forEach(item=>{
+                       ids+='ids='+item.id+'&';
+                   })
+                    this.deleteRequest('/system/basic/pos/'+ids).then(resp=>{
+                        if(resp){
+                            this.initPositions();
+                        }
+                    })
+               }).catch(()=>{
+                   this.$message({
+                       type:'info',
+                       message:'已取消删除'
+                   })
+               })
+           },
             addPosition() {
                 if (this.pos.name) {
                     this.postRequest('/system/basic/pos/', this.pos).then(resp=> {
