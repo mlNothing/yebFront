@@ -26,6 +26,9 @@
                         </template>
                     </el-table-column>
                 </el-table>
+                <el-button type="danger" size="small" style="margin-top:10px" :disabled="multipleSelection.length==0"
+                @click="deleteMany"
+                >批量删除</el-button>
         </div>
                 <el-dialog title="编辑职称" :visible.sync="dialogVisible" width="30%">
                         <div>
@@ -116,7 +119,25 @@
                });
                 })
             },
-            
+            deleteMany(){
+                this.$confirm('此操作将永久删除【'+this.multipleSelection.length+'】条记录，是否继续？','提示',{
+                    confirmButtonText:'确定',
+                    cancelButtonText:'取消',
+                    type:'warning'
+                }). then(()=>{
+                    let ids='?';
+                    this.multipleSelection.forEach(item=>{
+                        ids+='ids='+item.id+'&';
+                    })
+                    this.deleteRequest('/system/basic/jobLevel/'+ids).then(resp=>{
+                        if(resp){
+                            this.initJls();
+                        }
+                    })
+                }
+                )
+
+            },
             showEditView(indexs,data){
                 Object.assign(this.updateJl, data);
                 this.updateJl.createDate = '';
