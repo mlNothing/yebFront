@@ -16,11 +16,12 @@
           <el-button type="primary" icon="el-icon-search" @click="initEmps"
                      :disabled="showAdvanceSearchVisible">搜索
           </el-button>
-          <el-button type="primary">
+           <el-button type="primary" @click="showAdvanceSearchVisible = !showAdvanceSearchVisible">
             <i :class="showAdvanceSearchVisible?'fa fa-angle-double-up':'fa fa-angle-double-down'"
                aria-hidden="true"></i>高级搜索
           </el-button>
         </div>
+         
         <!-- 导入导出 -->
         <div>
           <!-- 27-1、3 导入数据 上传组件 用自己的按钮 -->
@@ -45,6 +46,83 @@
         </div>
       </div>
     </div>
+    <transition name="slide-fade">
+        <div v-show="showAdvanceSearchVisible"
+             style="border: 1px solid #379ff5;border-radius: 5px;box-sizing: border-box;padding: 5px;margin: 10px 0;">
+          <el-row>
+            <el-col :span="5">
+              政治面貌：
+              <el-select v-model="searchValue.politicId" placeholder="请选择政治面貌" size="mini" style="width: 130px;">
+                <el-option
+                    v-for="item in politicsstatus"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+                </el-option>
+              </el-select>
+            </el-col>
+            <el-col :span="4">
+              民族：
+              <el-select v-model="searchValue.nationId" placeholder="民族" size="mini" style="width: 130px;">
+                <el-option
+                    v-for="item in nations"
+                    :key="item.id"
+                    :label="item.name"
+                    :value="item.id">
+                </el-option>
+              </el-select>
+            </el-col>
+          </el-row>
+          <el-row style="margin-top: 10px;">
+            <!-- 30-4 处理部门 v-model="visible2" -->
+            <el-col :span="5">
+              所属部门：
+              <el-popover
+                  placement="bottom"
+                  title="请选择部门"
+                  width="220"
+                  trigger="manual"
+                  v-model="visible2">
+                <!-- 23-20 添加树形控件 default-expand-all	是否默认展开所有节点 ，节点点击事件 @node-click="handleNodeClick" -->
+                <el-tree :data="allDeps"
+                         :props="defaultProps"
+                         default-expand-all
+                         @node-click="searchHandleNodeClick"></el-tree>
+                <!-- 30-6 @node-click="searchHandleNodeClick" -->
+                <!-- node-click	节点被点击时的回调 共三个参数，依次为：传递给 data 属性的数组中该节点所对应的对象、节点对应的 Node、节点组件本身。 -->
+                <!-- 自定义点击事件 -->
+                <!-- 30-7 @click="showDepView2" -->
+                <div slot="reference"
+                     style="width:130px;display: inline-flex;
+                 border-radius: 5px;border: 1px solid #dedede;height: 28px;cursor: pointer;align-items: center;
+                 font-size: 12px;padding-left: 8px;box-sizing: border-box;"
+                     @click="showDepView2">{{ inputDepName }}
+                </div><!-- 23-25 回显数据 {{inputDepName}} -->
+              </el-popover>
+            </el-col>
+            <!-- 30-3 处理日期：v-model="searchValue.beginDateScope" value-format="yyyy-MM-dd" ;
+                 两个面板各自独立切换当前年份 使用unlink-panels -->
+            <el-col :span="10">
+              入职日期：
+              <el-date-picker
+                  unlink-panels
+                  size="mini"
+                  v-model="searchValue.beginDateScope"
+                  type="datetimerange"
+                  range-separator="至"
+                  value-format="yyyy-MM-dd"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期">
+              </el-date-picker>
+            </el-col>
+            <el-col :span="5" :offset="4">
+              <el-button size="mini">取消</el-button>
+              <!-- 30-10 @click="initEmps('advanced')" -->
+              <el-button type="primary" icon="el-icon-search" size="mini" @click="initEmps('advanced')">搜索</el-button>
+            </el-col>
+          </el-row>
+        </div>
+      </transition>
     <!-- 主页面 -->
     <div style="margin-top: 10px;">
       <el-table
@@ -258,7 +336,7 @@
             <el-col :span="7">
               <el-form-item label="政治面貌" prop="politicId">
                 <el-select v-model="emp.politicId" placeholder="请选择政治面貌" size="mini" style="width:200px">
-                  <el-option v-for="item in politicsstatus" :key="item" :label="item.name" :value="item.id"></el-option>
+                  <el-option v-for="(item,index) in politicsstatus" :key="index" :label="item.name" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -478,6 +556,17 @@ export default {
   name: "EmpBasic",
   data() {
     return {
+       searchValue: { // 30-1 高级搜索 条件对象
+        politicId: null, // 政治面貌
+        nationId: null, // 民族
+        posId: null, // 职位
+        jobLevelId: null, // 职称
+        engageForm: '', // 聘用形式
+        departmentId: null, // 部门 id
+        beginDateScope: null // 入职日期范围
+      },
+      visible2: false, // 30-5 高级搜索 部门
+      showAdvanceSearchVisible: false, // 28-2 高级搜索框 动态效果
       title: '', // 25-2 添加编辑员工弹框动态标题
       emps: [], // 3、获取所有员工（分页）
       loading: false, // 7、添加 loading
@@ -561,7 +650,6 @@ export default {
       importDataDisabled: false, // 27-9 导入按钮 默认不禁用
       importDataBtnText: '导入数据', // 27-2 导入数据
       importDataBtnIcon: 'el-icon-upload2', // 27-2 导入数据
-      showAdvanceSearchVisible: false, 
       dialogVisible:false,
       nations: [],   // 23-7 添加员工 民族
       joblevels: [], // 23-7 职称
@@ -578,6 +666,7 @@ export default {
       },
       allDeps: [], // 23-21 树形控件 绑定 所属部门 数据对象
       inputDepName: '',// 23-23 回显部门数据
+
     }
   },
   mounted() {
@@ -593,6 +682,7 @@ export default {
       this.importDataDisabled = false // 29-10 不禁用导入按钮
       this.initEmps()
     },
+    
     // 27-7 数据导入失败 恢复原来的图标和状态
     onError() {
       this.importDataBtnIcon = 'el-icon-upload2'
@@ -658,6 +748,11 @@ export default {
           this.total = resp.total // 12、分页
         }
       });
+    },
+     searchHandleNodeClick(data) {
+      this.inputDepName = data.name
+      this.searchValue.departmentId = data.id
+      this.visible2 = !this.visible2 // 弹框
     },
      showAddEmpView() {
       // 25-6 清空表单
@@ -799,7 +894,6 @@ export default {
       })
     },
      doAddEmp() {
-       console.log(this.emp)
       if (this.emp.id) {
         // 有 id 编辑员工
         this.$refs['empRef'].validate(valid => {
@@ -826,6 +920,9 @@ export default {
           }
         })
       }
+    },
+     showDepView2() {
+      this.visible2 = !this.visible2
     },
   }
 }
