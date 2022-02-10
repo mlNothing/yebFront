@@ -4,7 +4,9 @@
             <el-header class="homeHeader">
                 <div class="title">mlNothing</div>
                 <!-- 点击菜单项触发的事件回调	dropdown-item 的指令 command -->
-                <el-dropdown class="userInfo" @command="commandHandler">
+                <div>
+                <el-button @click="goChat" icon="el-icon-bell" type="text" style="color:black;margin-right:8px" size="normal"></el-button>
+                    <el-dropdown class="userInfo" @command="commandHandler">
                   <span class="el-dropdown-link">
                     {{user.name}}<i><img :src="user.userFace"></i>
                   </span>
@@ -14,6 +16,7 @@
                         <el-dropdown-item command="logout">注销登录</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
+                </div>
             </el-header>
             <el-container>
                 <el-aside width="200px">
@@ -61,6 +64,9 @@
            }
        },
        methods: {
+           goChat(){
+               this.$router.push('/chat')
+           },
             commandHandler(cmd) {
                 if (cmd == 'logout') {
                     this.$confirm('此操作将注销登录，是否继续？', '提示', {
