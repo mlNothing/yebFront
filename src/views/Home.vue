@@ -89,6 +89,9 @@
                                             })
                                         })
                                     }
+                if(cmd=='userinfo'){
+                    this.$router.push('/userinfo')
+                }
                                 }
                             }
                         }
