@@ -14,12 +14,21 @@ export default {
       content:''
     }
   },
+   computed: mapState([
+    'currentSession'
+  ]),
   methods: {
   	addMessage (e) {
   		if (e.ctrlKey && e.keyCode ===13 && this.content.length) {
-  			this.$store.commit('addMessage',this.content);
-  			this.content='';
-  		}
+         // 自定义发送消息
+        let msgObj = {}
+        // let msgObj = new Object()
+        msgObj.to = this.currentSession.username
+        msgObj.content = this.content
+        this.$store.state.stomp.send('/ws/chat', {}, JSON.stringify(msgObj))
+        this.$store.commit('addMessage', msgObj);
+        this.content = '';
+      }
   	}
   }
 }

@@ -8,7 +8,6 @@
       <message></message>
       <usertext></usertext>
     </div>
-    11
   </div>
 </template>
 
@@ -25,6 +24,7 @@ export default {
       
     }
   },
+  // 钩子函数
   mounted:function() {
     this.$store.dispatch('initData');
   },

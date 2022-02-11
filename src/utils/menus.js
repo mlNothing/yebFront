@@ -22,6 +22,8 @@ import {getRequest} from "./api";
              router.addRoutes(fmtRoutes);
              //将数据存入vuex
              store.commit('initRoutes',fmtRoutes);
+            //  连接websocker
+             store.dispatch('connect');
         }
     })
  }

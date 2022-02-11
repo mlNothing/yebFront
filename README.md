@@ -14,7 +14,8 @@ npm install node-sass --save-dev
 npm uninstall sass-loader node-sass
 npm install sass-loader@8.0.2 sass@1.26.5  --save-dev
 npm install js-file-download -- 文件下载
-
+ npm install sockjs-client ws需要
+ npm install stompjs  websocket 需要
 1.npm install
 1. npm run serve
 2. 

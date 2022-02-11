@@ -1,12 +1,12 @@
 <template>
-  <div id="message" v-scroll-bottom="session">
-  	<ul v-if="currentSessionId==item.id" v-for="item in sessions">
-  		<li v-for="entry in item.messages">
+  <div id="message" v-scroll-bottom="sessions">
+  	<ul v-if="currentSession" >
+  		<li v-for="entry in sessions[user.username+'#'+currentSession.username]" :key="entry">
   			<p class="time">
   				<span>{{entry.date | time}}</span>
   			</p>
   			<div class="main" :class="{self:entry.self}">
-  				<img class="avatar" :src="entry.self ? img : item.user.img" alt="">
+          <p class="avatar"><span>{{entry.self?user.name:currentSession.name}}</span></p>
   				<p class="text">{{entry.content}}</p>
   			</div>
   		</li>
@@ -21,12 +21,12 @@ export default {
   name: 'message',
   data () {
     return {
-      img: '../src/assets/images/1.jpg'
+      user:JSON.parse(window.sessionStorage.getItem('user'))
     }
   },
   computed:mapState([
   	'sessions',
-  	'currentSessionId'
+  	'currentSession'
   ]),
   filters:{
   	time (date) {
@@ -47,47 +47,46 @@ export default {
   }
 }
 </script>
-
 <style lang="scss" scoped>
 #message {
-	padding: 15px;
+  padding: 15px;
   max-height: 68%;
   overflow-y: scroll;
   ul {
-  	list-style-type: none;
-  	li {
-  		margin-bottom: 15px;
-  	}
+    list-style-type: none;
+    padding-left: 0;
+    li {
+      margin-bottom: 15px;
+    }
   }
   .time {
-  	text-align: center;
-  	margin: 7px 0;
-  	> span {
-  		display: inline-block;
-  		padding: 0 18px;
-  		font-size: 12px;
-  		color: #FFF;
-  		background-color: #dcdcdc;
-  		border-radius: 2px;
-  	}
+    text-align: center;
+    margin: 7px 0;
+    > span {
+      display: inline-block;
+      padding: 0 18px;
+      font-size: 12px;
+      color: #FFF;
+      background-color: #dcdcdc;
+      border-radius: 2px;
+    }
   }
   .main {
-  	.avatar {
-  		float: left;
-  		margin: 0 10px 0 0;
-  		border-radius: 3px;
-  		width: 30px;
-  		height: 30px;
-
-  	}
-  	.text {
-  		display: inline-block;
-  		padding: 0 10px;
-  		max-width: 80%;
-  		background-color: #fafafa;
+    .avatar {
+      float: left;
+      margin: 0 10px 0 0;
+      border-radius: 3px;
+      width: 100px;
+      height: 30px;
+    }
+    .text {
+      display: inline-block;
+      padding: 0 10px;
+      max-width: 80%;
+      background-color: #fafafa;
       border-radius: 4px;
       line-height: 30px;
-  	}
+    }
   }
   .self {
     text-align: right;
@@ -95,7 +94,7 @@ export default {
       float: right;
       margin: 0 0 0 10px;
       border-radius: 3px;
-      width: 30px;
+      width: 100px;
       height: 30px;
     }
     .text {
@@ -105,6 +104,7 @@ export default {
       background-color: #b2e281;
       border-radius: 4px;
       line-height: 30px;
+      margin-right: -30px;
     }
   }
 }
